@@ -1,0 +1,40 @@
+name: Build iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 XcodeGen 并生成 Xcode 工程
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: 构建未签名 App（真机 arm64）
+        run: |
+          xcodebuild -project LocationRecorder.xcodeproj \
+            -scheme LocationRecorder \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY=""
+
+      - name: 打包为 IPA
+        run: |
+          mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/LocationRecorder.app Payload/
+          zip -qr LocationRecorder-unsigned.ipa Payload
+
+      - name: 上传构建产物（IPA）
+        uses: actions/upload-artifact@v4
+        with:
+          name: LocationRecorder-ipa
+          path: LocationRecorder-unsigned.ipa
+          retention-days: 30
