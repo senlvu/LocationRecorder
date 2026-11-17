@@ -1,0 +1,42 @@
+name: LocationRecorder
+
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "15.0"
+
+targets:
+  LocationRecorder:
+    type: application
+    platform: iOS
+    sources:
+      - LocationRecorder
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: 定位记录器
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSLocationWhenInUseUsageDescription: 用于每 30 秒记录一次您的当前位置
+        UIBackgroundModes:
+          - location
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_VERSION: "5.0"
+
+schemes:
+  LocationRecorder:
+    build:
+      targets:
+        LocationRecorder: all
+    run:
+      config: Debug
+    archive:
+      config: Release
