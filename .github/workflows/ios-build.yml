@@ -7,7 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    # Xcode 14.2 + iOS 16 SDK。构建产物向下兼容 iOS 15+，向上兼容 iOS 26
+    runs-on: macos-13
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
@@ -17,12 +18,12 @@ jobs:
           brew install xcodegen
           xcodegen generate
 
-      - name: 构建未签名 App（真机 arm64）
+      - name: 构建未签名 App（arm64 通用，兼容 iOS 15~26）
         run: |
           xcodebuild -project LocationRecorder.xcodeproj \
             -scheme LocationRecorder \
             -configuration Release \
-            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY=""
 
